@@ -1,0 +1,42 @@
+.details {
+  display: flex;
+  align-items: center;
+}
+
+.linkToBack {
+  color: rgb(96, 163, 245);
+  margin-left: 20px;
+}
+
+.imgDetails {
+  width: 300px;
+  height: 100%;
+  margin-right: 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.detailsList {
+  list-style: none;
+  width: 900px;
+}
+
+.listCastReview {
+  display: flex;
+  list-style: none;
+}
+
+.itemCastReview {
+  margin-right: 15px;
+  margin-bottom: 20px;
+}
+
+.linkCastReviw {
+  color: rgb(96, 163, 245);
+  text-decoration: none;
+}
+
+.linkCastReviw:hover {
+  text-decoration: underline;
+  color: rgb(246, 246, 23);
+}

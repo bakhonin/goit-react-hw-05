@@ -1,0 +1,10 @@
+.listMoovies {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.movieLink {
+  text-decoration: none;
+  color: inherit;
+}
