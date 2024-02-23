@@ -13,19 +13,39 @@ const MoviesPage = () => {
   const location = useLocation();
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [error, setError] = useState(null);
+  const [, setSearchParams] = useSearchParams();
   const backLinkRef = useRef(location.state);
 
   const changeSearch = newSearch => {
-    searchParams.set('search', newSearch);
-    setSearchParams(searchParams);
+    setSearchParams({ search: newSearch });
   };
 
   useEffect(() => {
     const controller = new AbortController();
     const queryParams = new URLSearchParams(location.search);
     const queryParamSearch = queryParams.get('search') ?? '';
+
+    const handleSearch = async query => {
+      try {
+        setLoading(true);
+        setError(null);
+        const results = await searchMovies(query, { abortController: new AbortController() });
+        setSearchResults(results);
+        if (results.length === 0) {
+          toast.error('No movies found! 😞');
+        }
+      } catch (error) {
+        if (error.code !== 'ERR_CANCELED') {
+          setError('Oops, there was an error fetching movies. Please try again. 😭');
+        } else {
+          toast.error('Oops, there was an error, please try reloading 😭');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (queryParamSearch) {
       handleSearch(queryParamSearch);
     } else {
@@ -38,38 +58,22 @@ const MoviesPage = () => {
           abortController: controller,
         });
         setSearchResults(results);
+        setError(null);
       } catch (error) {
         if (error.code !== 'ERR_CANCELED') {
-          setError(true);
+          setError('Oops, there was an error fetching movies. Please try again. 😭');
         }
+      } finally {
+        setLoading(false);
       }
     }
+
     fetchData();
 
     return () => {
       controller.abort();
     };
   }, [location.search]);
-
-  const handleSearch = async query => {
-    try {
-      setLoading(true);
-      setError(false);
-      const results = await searchMovies(query, { abortController: new AbortController() });
-      setSearchResults(results);
-      if (results.length === 0) {
-        toast.error('No movies found! 😞');
-      }
-    } catch (error) {
-      if (error.code !== 'ERR_CANCELED') {
-        setError(true);
-      } else {
-        toast.error('Oops, there was an error, please try reloading 😭');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div>

@@ -9,20 +9,20 @@ import css from './HomePage.module.css';
 const HomePage = () => {
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
-    setError(false);
     const fetchMovies = async () => {
-      setError(false);
+      setIsLoading(true);
+      setError(null);
+
       try {
         const movies = await getTrendingMovies();
         setTrendingMovies(movies);
-        setIsLoading(false);
       } catch (error) {
-        toast.error('Oops, there was an error fetching trending movies. Please try reloading 😭');
+        setError('Oops, there was an error fetching trending movies. Please try reloading 😭');
+        toast.error(error.message);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -33,11 +33,14 @@ const HomePage = () => {
   return (
     <div className={css.homePage}>
       <h1 className={css.titleHomePage}>Trending today</h1>
+
       {error && <ErrorMessage message={error} />}
+
       {!isLoading && trendingMovies && trendingMovies.length > 0 && (
         <MovieList movies={trendingMovies} />
       )}
-      {loading && <Loader />}
+
+      {isLoading && <Loader />}
     </div>
   );
 };
